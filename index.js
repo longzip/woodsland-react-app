@@ -1,13 +1,13 @@
-//server.js
+require("dotenv").config(); // Sets up dotenv as soon as our application starts
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const favicon = require("express-favicon");
 const path = require("path");
-const port = process.env.PORT || 8080;
-const app = express();
+
 const router = express.Router();
-app.use(favicon(__dirname + "/build/favicon.ico"));
+
+const app = express();
+
 // Middleware
 app.use(bodyParser.json());
 app.use(
@@ -17,15 +17,25 @@ app.use(
 );
 app.use(cors());
 
+// This is equivalent to
+app.use("/", bodyParser.json());
+
+const environment = process.env.NODE_ENV;
+if (environment !== "production") {
+  const logger = require("morgan");
+  app.use(logger("dev"));
+  app.use("/", logger("dev"));
+}
+
 const routes = require("./routes/index.js");
+
 app.use("/api/v1", routes(router));
-// the __dirname is the current directory from where the script is running
-app.use(express.static(__dirname));
-app.use(express.static(path.join(__dirname, "build")));
-app.get("/ping", function(req, res) {
-  return res.send("pong");
-});
-app.get("/*", function(req, res) {
-  res.sendFile(path.join(__dirname, "build", "index.html"));
-});
-app.listen(port);
+// app.use(express.static(__dirname));
+app.use(express.static(path.join(__dirname, "public")));
+app.get("/.*/", (req, res) =>
+  res.sendFile(path.join(__dirname, "public", "index.html"))
+);
+
+const port = process.env.PORT || 5000;
+
+app.listen(port, () => console.log(`Server started on port ${port}`));
