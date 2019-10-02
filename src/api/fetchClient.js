@@ -2,7 +2,7 @@ import axios from "axios";
 
 const fetchClient = () => {
   const defaultOptions = {
-    baseURL: "/api/v1/",
+    baseURL: "http://localhost:5000/api/v1/",
     method: "get",
     headers: {
       "Content-Type": "application/json"
