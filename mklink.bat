@@ -1,0 +1,1 @@
+mklink /j build F:\Projects\wlapp\server\public
